@@ -1,34 +1,28 @@
-{
+import {GetAllBreedsService} from "../GetAllBreedsService";
+import {IBreedModel} from "../IBreedModel";
+import {IGateway} from "../IGateway";
+import {Gateway} from "../Gateway";
+
+jest.mock('../Gateway');
+const MockGateway: jest.Mocked<IGateway> = new Gateway("") as jest.Mocked<Gateway>;
+MockGateway.get.mockImplementation(() => Promise.resolve({
     "message": {
-        "affenpinscher": [
-        ],
-        "african": [
-        ],
-        "airedale": [
-        ],
-        "akita": [
-        ],
-        "appenzeller": [
-        ],
+        "affenpinscher": [],
+        "african": [],
+        "airedale": [],
+        "akita": [],
+        "appenzeller": [],
         "australian": [
             "shepherd"
         ],
-        "basenji": [
-        ],
-        "beagle": [
-        ],
-        "bluetick": [
-        ],
-        "borzoi": [
-        ],
-        "bouvier": [
-        ],
-        "boxer": [
-        ],
-        "brabancon": [
-        ],
-        "briard": [
-        ],
+        "basenji": [],
+        "beagle": [],
+        "bluetick": [],
+        "borzoi": [],
+        "bouvier": [],
+        "boxer": [],
+        "brabancon": [],
+        "briard": [],
         "buhund": [
             "norwegian"
         ],
@@ -40,62 +34,46 @@
         "bullterrier": [
             "staffordshire"
         ],
-        "cairn": [
-        ],
+        "cairn": [],
         "cattledog": [
             "australian"
         ],
-        "chihuahua": [
-        ],
-        "chow": [
-        ],
-        "clumber": [
-        ],
-        "cockapoo": [
-        ],
+        "chihuahua": [],
+        "chow": [],
+        "clumber": [],
+        "cockapoo": [],
         "collie": [
             "border"
         ],
-        "coonhound": [
-        ],
+        "coonhound": [],
         "corgi": [
             "cardigan"
         ],
-        "cotondetulear": [
-        ],
-        "dachshund": [
-        ],
-        "dalmatian": [
-        ],
+        "cotondetulear": [],
+        "dachshund": [],
+        "dalmatian": [],
         "dane": [
             "great"
         ],
         "deerhound": [
             "scottish"
         ],
-        "dhole": [
-        ],
-        "dingo": [
-        ],
-        "doberman": [
-        ],
+        "dhole": [],
+        "dingo": [],
+        "doberman": [],
         "elkhound": [
             "norwegian"
         ],
-        "entlebucher": [
-        ],
-        "eskimo": [
-        ],
+        "entlebucher": [],
+        "eskimo": [],
         "frise": [
             "bichon"
         ],
-        "germanshepherd": [
-        ],
+        "germanshepherd": [],
         "greyhound": [
             "italian"
         ],
-        "groenendael": [
-        ],
+        "groenendael": [],
         "hound": [
             "afghan",
             "basset",
@@ -104,75 +82,51 @@
             "ibizan",
             "walker"
         ],
-        "husky": [
-        ],
-        "keeshond": [
-        ],
-        "kelpie": [
-        ],
-        "komondor": [
-        ],
-        "kuvasz": [
-        ],
-        "labrador": [
-        ],
-        "leonberg": [
-        ],
-        "lhasa": [
-        ],
-        "malamute": [
-        ],
-        "malinois": [
-        ],
-        "maltese": [
-        ],
+        "husky": [],
+        "keeshond": [],
+        "kelpie": [],
+        "komondor": [],
+        "kuvasz": [],
+        "labrador": [],
+        "leonberg": [],
+        "lhasa": [],
+        "malamute": [],
+        "malinois": [],
+        "maltese": [],
         "mastiff": [
             "bull",
             "english",
             "tibetan"
         ],
-        "mexicanhairless": [
-        ],
-        "mix": [
-        ],
+        "mexicanhairless": [],
+        "mix": [],
         "mountain": [
             "bernese",
             "swiss"
         ],
-        "newfoundland": [
-        ],
-        "otterhound": [
-        ],
-        "papillon": [
-        ],
-        "pekinese": [
-        ],
-        "pembroke": [
-        ],
+        "newfoundland": [],
+        "otterhound": [],
+        "papillon": [],
+        "pekinese": [],
+        "pembroke": [],
         "pinscher": [
             "miniature"
         ],
-        "pitbull": [
-        ],
+        "pitbull": [],
         "pointer": [
             "german",
             "germanlonghair"
         ],
-        "pomeranian": [
-        ],
+        "pomeranian": [],
         "poodle": [
             "miniature",
             "standard",
             "toy"
         ],
-        "pug": [
-        ],
-        "puggle": [
-        ],
-        "pyrenees": [
-        ],
-        "redbone": [
-        ],
+        "pug": [],
+        "puggle": [],
+        "pyrenees": [],
+        "redbone": [],
         "retriever": [
             "chesapeake",
             "curly",
@@ -182,14 +136,10 @@
         "ridgeback": [
             "rhodesian"
         ],
-        "rottweiler": [
-        ],
-        "saluki": [
-        ],
-        "samoyed": [
-        ],
-        "schipperke": [
-        ],
+        "rottweiler": [],
+        "saluki": [],
+        "samoyed": [],
+        "schipperke": [],
         "schnauzer": [
             "giant",
             "miniature"
@@ -203,10 +153,8 @@
             "english",
             "shetland"
         ],
-        "shiba": [
-        ],
-        "shihtzu": [
-        ],
+        "shiba": [],
+        "shihtzu": [],
         "spaniel": [
             "blenheim",
             "brittany",
@@ -219,8 +167,7 @@
         "springer": [
             "english"
         ],
-        "stbernard": [
-        ],
+        "stbernard": [],
         "terrier": [
             "american",
             "australian",
@@ -244,18 +191,27 @@
             "wheaten",
             "yorkshire"
         ],
-        "vizsla": [
-        ],
+        "vizsla": [],
         "waterdog": [
             "spanish"
         ],
-        "weimaraner": [
-        ],
-        "whippet": [
-        ],
+        "weimaraner": [],
+        "whippet": [],
         "wolfhound": [
             "irish"
         ]
     },
     "status": "success"
-}
+} as IBreedModel));
+
+describe("Given the GetAllBreedsService", () => {
+
+    const getAllBreedsService = new GetAllBreedsService(MockGateway);
+
+    it("it will get all the breeds", async () => {
+        const allBreeds: IBreedModel = await getAllBreedsService.execute();
+        expect(allBreeds.status).toBe("success");
+        expect(allBreeds.message).toBeDefined();
+        expect(MockGateway.get).toHaveBeenCalled();
+    });
+});

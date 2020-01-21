@@ -1,23 +1,31 @@
-import {IGateway} from "./IGateway";
-import imageBySubBreed from "./imageBySubBreed.json";
-import {GetImageBySubBreedService} from "./GetImageBySubBreedService";
+import {IGateway} from "../IGateway";
+import {GetImageBySubBreedService} from "../GetImageBySubBreedService";
+import {ImageResponse} from "../ImageResponse";
+import {Gateway} from "../Gateway";
 
-const MockGateway = jest.fn<IGateway, any>(() => {
-    return {
-        get<Any>(url: string): Any {
-            return imageBySubBreed as any;
-        },
-    };
-});
+jest.mock('../Gateway');
+const MockGateway: jest.Mocked<IGateway> = new Gateway("") as jest.Mocked<Gateway>;
+MockGateway.get.mockImplementation(() => Promise.resolve({
+    "message": [
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10263.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10715.jpg"
+    ],
+    "status": "success"
+} as ImageResponse));
+
 
 describe("GetImageBySubBreedService", () => {
-    let getImageBySubBreedService = new GetImageBySubBreedService(new MockGateway());
+    let getImageBySubBreedService = new GetImageBySubBreedService(MockGateway);
 
     describe("Given the sub breed", () => {
         it("it will get the sub breed", async () => {
             const imageResponse = await getImageBySubBreedService.execute("hound/afghan");
             expect(imageResponse.status).toBe("success");
             expect(imageResponse.message.length).toBeGreaterThan(0);
+            expect(MockGateway.get).toHaveBeenCalled();
         });
     });
 

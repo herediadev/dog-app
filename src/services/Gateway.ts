@@ -4,8 +4,8 @@ class Gateway implements IGateway {
     constructor(private baseUrl: string) {
     }
 
-    public get(url: string): any {
-        return [];
+    public async get<RESPONSE>(url: string): Promise<RESPONSE> {
+        return Promise.resolve({} as RESPONSE);
     }
 }
 
