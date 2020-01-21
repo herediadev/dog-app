@@ -1,10 +1,10 @@
 import {GetImageByBreedService} from "../GetImageByBreedService";
 import {IGateway} from "../IGateway";
 import {ImageResponse} from "../ImageResponse";
-import {Gateway} from "../Gateway";
+import {AxiosGateway} from "../AxiosGateway";
 
-jest.mock('../Gateway');
-const MockGateway: jest.Mocked<IGateway> = new Gateway("") as jest.Mocked<Gateway>;
+jest.mock('../AxiosGateway');
+const MockGateway: jest.Mocked<IGateway> = new AxiosGateway() as jest.Mocked<AxiosGateway>;
 MockGateway.get.mockImplementation(() => Promise.resolve({
     "message": [
         "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",

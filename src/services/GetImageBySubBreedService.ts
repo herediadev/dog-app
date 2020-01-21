@@ -6,6 +6,6 @@ export class GetImageBySubBreedService {
     }
 
     public async execute(subBreed: string): Promise<ImageResponse> {
-        return await this.gateway.get<ImageResponse>("https://dog.ceo/api/breed/" + subBreed + "/images");
+        return await this.gateway.get<ImageResponse>("/api/breed/" + subBreed + "/images");
     }
 }
