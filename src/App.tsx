@@ -1,270 +1,125 @@
 import React from 'react';
 import './App.css';
-import {Select, TreeSelect, Typography} from "antd";
+import {Button, Card, Layout, TreeSelect, Typography} from "antd";
 import {IBreedResponse} from "./services/IBreedResponse";
+import {GetAllBreedsService} from "./services/GetAllBreedsService";
+import {axiosGateway} from "./services/AxiosGateway";
 
+const {Header, Content} = Layout;
 const {Title} = Typography;
-const {Option} = Select;
 const {SHOW_PARENT} = TreeSelect;
+const {Meta} = Card;
 
-const breeds: IBreedResponse = {
-    "message": {
-        "affenpinscher": [],
-        "african": [],
-        "airedale": [],
-        "akita": [],
-        "appenzeller": [],
-        "australian": [
-            "shepherd"
-        ],
-        "basenji": [],
-        "beagle": [],
-        "bluetick": [],
-        "borzoi": [],
-        "bouvier": [],
-        "boxer": [],
-        "brabancon": [],
-        "briard": [],
-        "buhund": [
-            "norwegian"
-        ],
-        "bulldog": [
-            "boston",
-            "english",
-            "french"
-        ],
-        "bullterrier": [
-            "staffordshire"
-        ],
-        "cairn": [],
-        "cattledog": [
-            "australian"
-        ],
-        "chihuahua": [],
-        "chow": [],
-        "clumber": [],
-        "cockapoo": [],
-        "collie": [
-            "border"
-        ],
-        "coonhound": [],
-        "corgi": [
-            "cardigan"
-        ],
-        "cotondetulear": [],
-        "dachshund": [],
-        "dalmatian": [],
-        "dane": [
-            "great"
-        ],
-        "deerhound": [
-            "scottish"
-        ],
-        "dhole": [],
-        "dingo": [],
-        "doberman": [],
-        "elkhound": [
-            "norwegian"
-        ],
-        "entlebucher": [],
-        "eskimo": [],
-        "frise": [
-            "bichon"
-        ],
-        "germanshepherd": [],
-        "greyhound": [
-            "italian"
-        ],
-        "groenendael": [],
-        "hound": [
-            "afghan",
-            "basset",
-            "blood",
-            "english",
-            "ibizan",
-            "walker"
-        ],
-        "husky": [],
-        "keeshond": [],
-        "kelpie": [],
-        "komondor": [],
-        "kuvasz": [],
-        "labrador": [],
-        "leonberg": [],
-        "lhasa": [],
-        "malamute": [],
-        "malinois": [],
-        "maltese": [],
-        "mastiff": [
-            "bull",
-            "english",
-            "tibetan"
-        ],
-        "mexicanhairless": [],
-        "mix": [],
-        "mountain": [
-            "bernese",
-            "swiss"
-        ],
-        "newfoundland": [],
-        "otterhound": [],
-        "papillon": [],
-        "pekinese": [],
-        "pembroke": [],
-        "pinscher": [
-            "miniature"
-        ],
-        "pitbull": [],
-        "pointer": [
-            "german",
-            "germanlonghair"
-        ],
-        "pomeranian": [],
-        "poodle": [
-            "miniature",
-            "standard",
-            "toy"
-        ],
-        "pug": [],
-        "puggle": [],
-        "pyrenees": [],
-        "redbone": [],
-        "retriever": [
-            "chesapeake",
-            "curly",
-            "flatcoated",
-            "golden"
-        ],
-        "ridgeback": [
-            "rhodesian"
-        ],
-        "rottweiler": [],
-        "saluki": [],
-        "samoyed": [],
-        "schipperke": [],
-        "schnauzer": [
-            "giant",
-            "miniature"
-        ],
-        "setter": [
-            "english",
-            "gordon",
-            "irish"
-        ],
-        "sheepdog": [
-            "english",
-            "shetland"
-        ],
-        "shiba": [],
-        "shihtzu": [],
-        "spaniel": [
-            "blenheim",
-            "brittany",
-            "cocker",
-            "irish",
-            "japanese",
-            "sussex",
-            "welsh"
-        ],
-        "springer": [
-            "english"
-        ],
-        "stbernard": [],
-        "terrier": [
-            "american",
-            "australian",
-            "bedlington",
-            "border",
-            "dandie",
-            "fox",
-            "irish",
-            "kerryblue",
-            "lakeland",
-            "norfolk",
-            "norwich",
-            "patterdale",
-            "russell",
-            "scottish",
-            "sealyham",
-            "silky",
-            "tibetan",
-            "toy",
-            "westhighland",
-            "wheaten",
-            "yorkshire"
-        ],
-        "vizsla": [],
-        "waterdog": [
-            "spanish"
-        ],
-        "weimaraner": [],
-        "whippet": [],
-        "wolfhound": [
-            "irish"
-        ]
-    },
+const dogsImages = {
+    "message": [
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10263.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10715.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10822.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10832.jpg",
+
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10147.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10185.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10225.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10437.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10439.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10447.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10680.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10787.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10848.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10859.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10986.jpg",
+        "https://images.dog.ceo/breeds/affenpinscher/n02110627_11211.jpg"
+    ],
     "status": "success"
 };
 
-const breedAndSubBreeds = Object.keys(breeds.message).filter(breed => breeds.message[breed].length > 0).map((breed) => {
-    return {breed: breed, subBreeds: breeds.message[breed]}
-});
+class App extends React.Component<any, any> {
+    private readonly tProps: any;
+    private readonly getAllBreedsService: GetAllBreedsService;
 
-const treeData = breedAndSubBreeds.map((breedAndSubBreed, index) => {
-    const value = "0-" + index;
-    return {
-        title: breedAndSubBreed.breed,
-        value: value,
-        key: value,
-        children: breedAndSubBreed.subBreeds.map((subBreed, subIndex) => {
-            return {
-                title: subBreed,
-                value: value + "-" + subIndex,
-                key: value + "-" + subIndex
-            };
-        })
-    };
-});
-
-class App extends React.Component {
     state = {
-        value: ['0-0-0'],
+        value: [],
+        dogsImages: [],
+        treeData: []
     };
+
+    constructor(props: any) {
+        super(props);
+        this.getAllBreedsService = new GetAllBreedsService(axiosGateway);
+        this.tProps = {
+            value: this.state.value,
+            onChange: this.onChange,
+            treeCheckable: true,
+            showCheckedStrategy: SHOW_PARENT,
+            searchPlaceholder: 'Please select the dogs you want to search',
+            style: {
+                width: '100%',
+            },
+        };
+    }
 
     onChange = (value: any) => {
         console.log('onChange ', value);
         this.setState({value});
     };
-
-    handleChangeBreed = (value: any) => {
-        console.log(`selected ${value}`);
+    searchDogs = () => {
+        console.log(this.state.value);
     };
 
-    render() {
-        const tProps = {
-            treeData,
-            value: this.state.value,
-            onChange: this.onChange,
-            treeCheckable: true,
-            showCheckedStrategy: SHOW_PARENT,
-            searchPlaceholder: 'Please select',
-            style: {
-                width: '100%',
-            },
-        };
-        return (
-            <div className="App">
-                <header className="App-header">
-                    <Title>h1. Ant Design</Title>
-                    <Select mode="tags" style={{width: '100%'}} placeholder="Tags Mode"
-                            onChange={this.handleChangeBreed}>
-                        {Object.keys(breeds.message).map(breed => (
-                            <Option key={breed}>{breed}</Option>))}
-                    </Select>
 
-                    <TreeSelect {...tProps} />
-                </header>
-            </div>
+    async componentDidMount(): Promise<void> {
+        const breeds: IBreedResponse = await this.getAllBreedsService.execute();
+        const breedAndSubBreeds = Object.keys(breeds.message).map((breed) => {
+            return {breed: breed, subBreeds: breeds.message[breed]}
+        });
+        const treeData = breedAndSubBreeds.map((breedAndSubBreed, index) => {
+            const value = "0-" + index;
+            return {
+                title: breedAndSubBreed.breed,
+                value: breedAndSubBreed.breed,
+                key: value,
+                children: breedAndSubBreed.subBreeds.map((subBreed, subIndex) => {
+                    return {
+                        title: breedAndSubBreed.breed + "-" + subBreed,
+                        value: breedAndSubBreed.breed + "/" + subBreed,
+                        key: value + "-" + subIndex
+                    };
+                })
+            };
+        });
+
+        this.setState({treeData});
+        console.log(treeData)
+    }
+
+    render() {
+        return (
+            <Layout>
+                <Header className="header">
+                    <Title className="title">Dog App</Title>
+                </Header>
+                <Layout>
+                    <Content className="content">
+                        <TreeSelect {...this.tProps} treeData={this.state.treeData} style={{width: "85%"}}/>
+                        <Button type={"primary"} onClick={this.searchDogs}>Search</Button>
+                        <div className="row">
+                            {dogsImages.message.map(image => (
+                                <div className="column" key={image}>
+                                    <Card
+                                        hoverable
+                                        style={{width: 240, height: "100%", marginTop: "5px"}}
+                                        cover={<img alt="example" src={image}/>}>
+                                        <Meta title="bark bark"/>
+                                    </Card>
+                                </div>
+                            ))}
+                        </div>
+                    </Content>
+                </Layout>
+            </Layout>
         );
     }
 }

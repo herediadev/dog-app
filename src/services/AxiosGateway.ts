@@ -10,9 +10,12 @@ class AxiosGateway implements IGateway {
     }
 
     public async get<RESPONSE>(url: string): Promise<RESPONSE> {
-        return this.apiServiceInstance.get(url);
+        const {data} = await this.apiServiceInstance.get(url);
+        return data;
     }
 }
+
+export const axiosGateway = new AxiosGateway();
 
 export {
     AxiosGateway,
