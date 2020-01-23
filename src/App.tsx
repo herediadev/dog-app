@@ -1,6 +1,5 @@
 import React from 'react';
-import './App.css';
-import {Button, Card, Layout, TreeSelect, Typography} from "antd";
+import {Button, Layout, TreeSelect, Typography} from "antd";
 import {IBreedResponse} from "./services/IBreedResponse";
 import {GetAllBreedsService} from "./services/GetAllBreedsService";
 import {axiosGateway} from "./services/AxiosGateway";
@@ -9,6 +8,9 @@ import {GetBreedAndSubBreeds} from "./GetBreedAndSubBreeds";
 import {CreateTreeData} from "./CreateTreeData";
 import {BreedSubBreedModel} from "./BreedSubBreedModel";
 import {ITreeDataModel} from "./ITreeDataModels";
+import {CreateDogImage} from "./CreateDogImage";
+
+import './App.css';
 
 const {Header, Content} = Layout;
 const {Title} = Typography;
@@ -55,7 +57,7 @@ class App extends React.Component<any, IAppState> {
             showCheckedStrategy: SHOW_PARENT,
             searchPlaceholder: 'Please select the dogs you want to search',
             style: {
-                width: '100%',
+                width: '85%',
             },
         };
         return (
@@ -65,17 +67,9 @@ class App extends React.Component<any, IAppState> {
                 </Header>
                 <Layout>
                     <Content className="content">
-                        <TreeSelect {...tProps} style={{width: "85%"}}/>
+                        <TreeSelect {...tProps}/>
                         <Button type={"primary"} onClick={this.searchDogs}>Search</Button>
-                        <div className="row">
-                            {this.state.dogsImages.map((image) => (
-                                <div className="column" key={image}>
-                                    <Card style={{width: 240, height: "100%", marginTop: "5px"}}
-                                          cover={<img alt={image} src={image}/>}>
-                                    </Card>
-                                </div>
-                            ))}
-                        </div>
+                        <CreateDogImage dogsImages={this.state.dogsImages}/>
                     </Content>
                 </Layout>
             </Layout>
