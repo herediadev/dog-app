@@ -4,41 +4,16 @@ import {Button, Card, Layout, TreeSelect, Typography} from "antd";
 import {IBreedResponse} from "./services/IBreedResponse";
 import {GetAllBreedsService} from "./services/GetAllBreedsService";
 import {axiosGateway} from "./services/AxiosGateway";
+import {GetImageByBreedService} from "./services/GetImageByBreedService";
 
 const {Header, Content} = Layout;
 const {Title} = Typography;
 const {SHOW_PARENT} = TreeSelect;
 const {Meta} = Card;
 
-const dogsImages = {
-    "message": [
-        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
-        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
-        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg",
-        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10263.jpg",
-        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10715.jpg",
-        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10822.jpg",
-        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10832.jpg",
-
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10147.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10185.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10225.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10437.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10439.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10447.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10680.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10787.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10848.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10859.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_10986.jpg",
-        "https://images.dog.ceo/breeds/affenpinscher/n02110627_11211.jpg"
-    ],
-    "status": "success"
-};
-
 class App extends React.Component<any, any> {
-    private readonly tProps: any;
     private readonly getAllBreedsService: GetAllBreedsService;
+    private readonly getImageByBreedService: GetImageByBreedService;
 
     state = {
         value: [],
@@ -49,26 +24,22 @@ class App extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.getAllBreedsService = new GetAllBreedsService(axiosGateway);
-        this.tProps = {
-            value: this.state.value,
-            onChange: this.onChange,
-            treeCheckable: true,
-            showCheckedStrategy: SHOW_PARENT,
-            searchPlaceholder: 'Please select the dogs you want to search',
-            style: {
-                width: '100%',
-            },
-        };
+        this.getImageByBreedService = new GetImageByBreedService(axiosGateway);
     }
 
     onChange = (value: any) => {
         console.log('onChange ', value);
         this.setState({value});
     };
-    searchDogs = () => {
-        console.log(this.state.value);
-    };
 
+    searchDogs = async () => {
+        const getImagePromise = this.state.value.map(selectedBreedsAndSubBreed => this.getImageByBreedService.execute(selectedBreedsAndSubBreed));
+        const imageResponses = await Promise.all(getImagePromise);
+        const images = imageResponses.flatMap(value => value.message);
+        this.setState({dogsImages: images});
+
+        console.log(imageResponses);
+    };
 
     async componentDidMount(): Promise<void> {
         const breeds: IBreedResponse = await this.getAllBreedsService.execute();
@@ -90,12 +61,21 @@ class App extends React.Component<any, any> {
                 })
             };
         });
-
         this.setState({treeData});
-        console.log(treeData)
     }
 
     render() {
+        const tProps = {
+            treeData: this.state.treeData,
+            value: this.state.value,
+            onChange: this.onChange,
+            treeCheckable: true,
+            showCheckedStrategy: SHOW_PARENT,
+            searchPlaceholder: 'Please select the dogs you want to search',
+            style: {
+                width: '100%',
+            },
+        };
         return (
             <Layout>
                 <Header className="header">
@@ -103,16 +83,14 @@ class App extends React.Component<any, any> {
                 </Header>
                 <Layout>
                     <Content className="content">
-                        <TreeSelect {...this.tProps} treeData={this.state.treeData} style={{width: "85%"}}/>
+                        <TreeSelect {...tProps} style={{width: "85%"}}/>
                         <Button type={"primary"} onClick={this.searchDogs}>Search</Button>
                         <div className="row">
-                            {dogsImages.message.map(image => (
+                            {this.state.dogsImages.map((image, index) => (
                                 <div className="column" key={image}>
-                                    <Card
-                                        hoverable
-                                        style={{width: 240, height: "100%", marginTop: "5px"}}
-                                        cover={<img alt="example" src={image}/>}>
-                                        <Meta title="bark bark"/>
+                                    <Card style={{width: 240, height: "100%", marginTop: "5px"}}
+                                          cover={<img alt={image} src={image}/>}>
+                                        <Meta title={this.state.value[index]}/>
                                     </Card>
                                 </div>
                             ))}
