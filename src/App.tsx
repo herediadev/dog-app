@@ -9,14 +9,13 @@ import {GetImageByBreedService} from "./services/GetImageByBreedService";
 const {Header, Content} = Layout;
 const {Title} = Typography;
 const {SHOW_PARENT} = TreeSelect;
-const {Meta} = Card;
 
 class App extends React.Component<any, any> {
     private readonly getAllBreedsService: GetAllBreedsService;
     private readonly getImageByBreedService: GetImageByBreedService;
 
     state = {
-        value: [],
+        selectedBreeds: [],
         dogsImages: [],
         treeData: []
     };
@@ -28,17 +27,14 @@ class App extends React.Component<any, any> {
     }
 
     onChange = (value: any) => {
-        console.log('onChange ', value);
-        this.setState({value});
+        this.setState({selectedBreeds: value});
     };
 
     searchDogs = async () => {
-        const getImagePromise = this.state.value.map(selectedBreedsAndSubBreed => this.getImageByBreedService.execute(selectedBreedsAndSubBreed));
+        const getImagePromise = this.state.selectedBreeds.map(selectedBreedsAndSubBreed => this.getImageByBreedService.execute(selectedBreedsAndSubBreed));
         const imageResponses = await Promise.all(getImagePromise);
-        const images = imageResponses.flatMap(value => value.message);
+        const images = imageResponses.flatMap(selectedBreed => selectedBreed.message);
         this.setState({dogsImages: images});
-
-        console.log(imageResponses);
     };
 
     async componentDidMount(): Promise<void> {
@@ -67,7 +63,7 @@ class App extends React.Component<any, any> {
     render() {
         const tProps = {
             treeData: this.state.treeData,
-            value: this.state.value,
+            value: this.state.selectedBreeds,
             onChange: this.onChange,
             treeCheckable: true,
             showCheckedStrategy: SHOW_PARENT,
@@ -90,7 +86,6 @@ class App extends React.Component<any, any> {
                                 <div className="column" key={image}>
                                     <Card style={{width: 240, height: "100%", marginTop: "5px"}}
                                           cover={<img alt={image} src={image}/>}>
-                                        <Meta title={this.state.value[index]}/>
                                     </Card>
                                 </div>
                             ))}
