@@ -4,8 +4,7 @@ import {ImageResponse} from "../ImageResponse";
 import {AxiosGateway} from "../AxiosGateway";
 
 jest.mock('../AxiosGateway');
-const MockGateway: jest.Mocked<IGateway> = new AxiosGateway() as jest.Mocked<AxiosGateway>;
-MockGateway.get.mockImplementation(() => Promise.resolve({
+const breedResponse = {
     "message": [
         "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
         "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
@@ -29,17 +28,46 @@ MockGateway.get.mockImplementation(() => Promise.resolve({
         "https://images.dog.ceo/breeds/affenpinscher/n02110627_11211.jpg"
     ],
     "status": "success"
-} as ImageResponse));
-
+} as ImageResponse;
+const subBreedResponse = {
+    "message": [
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10263.jpg",
+        "https://images.dog.ceo/breeds/hound-afghan/n02088094_10715.jpg"
+    ],
+    "status": "success"
+} as ImageResponse;
 
 describe("GetImageByBreedService", () => {
+    let getImageByBreedService: GetImageByBreedService;
+    let mockGateway: jest.Mocked<IGateway>;
+
+    beforeEach(() => {
+        mockGateway = new AxiosGateway() as jest.Mocked<AxiosGateway>;
+        getImageByBreedService = new GetImageByBreedService(mockGateway)
+    });
+
     describe("Given the breed", () => {
         it("it will get the breed images", async () => {
-            const getImageByBreedService = new GetImageByBreedService(MockGateway);
+            mockGateway.get.mockResolvedValue(breedResponse);
             const byBreed: ImageResponse = await getImageByBreedService.execute("hound");
             expect(byBreed.message.length).toBeGreaterThan(0);
             expect(byBreed.status).toBe("success");
-            expect(MockGateway.get).toHaveBeenCalled();
+            expect(mockGateway.get).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe("Given two breeds", () => {
+        it("it will get the two responses", async () => {
+            mockGateway.get.mockResolvedValue(subBreedResponse);
+            const subBreed1 = "hound/afghan";
+            const subBreed2 = "bulldog/english";
+            const breedsResponses = await Promise.all([getImageByBreedService.execute(subBreed1), getImageByBreedService.execute(subBreed2)]);
+            const breedsImages = breedsResponses.flatMap(breeds => breeds.message);
+            expect(mockGateway.get).toHaveBeenCalledTimes(2);
+            expect(breedsImages.length).toBe(10);
         });
     });
 });

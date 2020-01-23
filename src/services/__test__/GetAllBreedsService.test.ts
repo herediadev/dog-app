@@ -4,8 +4,7 @@ import {IGateway} from "../IGateway";
 import {AxiosGateway} from "../AxiosGateway";
 
 jest.mock('../AxiosGateway');
-const MockGateway: jest.Mocked<IGateway> = new AxiosGateway() as jest.Mocked<AxiosGateway>;
-MockGateway.get.mockImplementation(() => Promise.resolve({
+const allBreedsReponse = {
     "message": {
         "affenpinscher": [],
         "african": [],
@@ -202,16 +201,17 @@ MockGateway.get.mockImplementation(() => Promise.resolve({
         ]
     },
     "status": "success"
-} as IBreedResponse));
+} as IBreedResponse;
 
 describe("Given the GetAllBreedsService", () => {
-
-    const getAllBreedsService = new GetAllBreedsService(MockGateway);
+    const mockGateway: jest.Mocked<IGateway> = new AxiosGateway() as jest.Mocked<AxiosGateway>;
+    const getAllBreedsService = new GetAllBreedsService(mockGateway);
 
     it("it will get all the breeds", async () => {
+        mockGateway.get.mockResolvedValue(allBreedsReponse);
         const allBreeds: IBreedResponse = await getAllBreedsService.execute();
         expect(allBreeds.status).toBe("success");
         expect(allBreeds.message).toBeDefined();
-        expect(MockGateway.get).toHaveBeenCalled();
+        expect(mockGateway.get).toHaveBeenCalled();
     });
 });
